@@ -710,3 +710,154 @@ const add = a + b;
 console.log(typeof add); // number
 console.log(add); // 10
 
+// replace array in JSON.stringify method
+
+const userMe = {
+   id: 101,
+   name: "Salman",
+   age: 25,
+   role: "Developer",
+   passwordHash: "secret_abc123",
+};
+
+// Only stringify 'name' and 'role'
+const replacer = ["name", "role"];
+
+const userString = JSON.stringify(userMe, replacer);
+
+console.log(userString);
+// Output: '{"name":"Salman","role":"Developer"}'
+
+// The replacer array works recursively.
+// If your target object contains nested objects,
+// properties matching any string in the replacer array
+// will be included at all nesting levels:
+
+const company = {
+   name: "TechCorp",
+   location: "Karachi",
+   details: {
+      name: "Headquarters", // Property name 'name' matches the array
+      employees: 150,
+   },
+};
+
+const companyString = JSON.stringify(company, ["name", "details"]);
+
+console.log(companyString);
+// Output: '{"name":"TechCorp","details":{"name":"Headquarters"}}'
+
+// Replace function in JSON.stringify
+
+const sameUser = { name: "Salman" };
+
+JSON.stringify(sameUser, (key, value) => {
+   console.log(`Key: "${key}"`, value);
+   return value;
+});
+
+// Logs:
+// Key: "" { name: 'Salman' }  <-- Initial root call!
+// Key: "name" Salman
+
+// 1. Filtering Properties (Returning undefined)
+const anotherUser = {
+   id: 101,
+   name: "Salman",
+   passwordHash: "secret_12345",
+   creditCard: "4111-xxxx-xxxx-1111",
+};
+
+const anotherUserString = JSON.stringify(anotherUser, (key, value) => {
+   // Strip sensitive fields
+   if (key === "passwordHash" || key === "creditCard") {
+      return undefined; // Excludes property from output
+   }
+   return value;
+});
+
+console.log(anotherUserString);
+// Output: '{"id":101,"name":"Salman"}'
+
+// 2. Transforming Values Dynamically
+
+const item = {
+   name: "Laptop",
+   price: 1200,
+   tags: ["electronics", "tech"],
+   isAvailable: true,
+};
+
+const jsonString = JSON.stringify(item, (key, value) => {
+   // Uppercase all string values
+   if (typeof value === "string") {
+      return value.toUpperCase();
+   }
+   // Double all numbers
+   if (typeof value === "number") {
+      return value * 2;
+   }
+   return value;
+});
+
+console.log(jsonString);
+// Output: '{"name":"LAPTOP","price":2400,"tags":["ELECTRONICS","TECH"],"isAvailable":true}'
+
+// 3. Handling Unstringifiable Types (BigInt, Map, Set)
+const state = {
+   bigId: 9007199254740991n, // BigInt
+   uniqueTags: new Set(["js", "node"]),
+};
+
+const unstrString = JSON.stringify(state, (key, value) => {
+   // Convert BigInt to string to avoid TypeError
+   if (typeof value === "bigint") {
+      return value.toString();
+   }
+   // Convert Set to Array
+   if (value instanceof Set) {
+      return Array.from(value);
+   }
+   return value;
+});
+
+console.log(unstrString);
+// Output: '{"bigId":"9007199254740991","uniqueTags":["js","node"]}'
+
+let room = {
+   number: 23,
+};
+
+let meetup = {
+   title: "Conference",
+   occupiedBy: [{ name: "John" }, { name: "Alice" }],
+   place: room,
+};
+
+// Circular references
+room.occupiedBy = meetup;
+meetup.self = meetup;
+
+console.log(
+   JSON.stringify(meetup, function replacer(key, value) {
+      // 1. Remove 'self'
+      if (key === "self") {
+         return undefined;
+      }
+
+      // 2. Remove 'occupiedBy' ONLY if it belongs to 'room' (this === room)
+      if (key === "occupiedBy" && this === room) {
+         return undefined;
+      }
+
+      return value;
+   }),
+);
+
+/* result should be:
+{
+  "title":"Conference",
+  "occupiedBy":[{"name":"John"},{"name":"Alice"}],
+  "place":{"number":23}
+}
+*/
