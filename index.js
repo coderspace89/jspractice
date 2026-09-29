@@ -861,3 +861,109 @@ console.log(
   "place":{"number":23}
 }
 */
+
+// Recursion
+// Task 1:
+// Sum all numbers till the given one
+
+function sumTo(n) {
+   if (n == 1) {
+      return n;
+   } else {
+      return n + sumTo(n - 1);
+   }
+}
+
+console.log(sumTo(100)); // 5050
+
+// using for loop
+function sumToLoop(n) {
+   let result = 0;
+
+   for (let i = 1; i <= n; i++) {
+      result += i;
+   }
+
+   return result;
+}
+
+console.log(sumToLoop(100)); // 5050
+
+// using arthimetic progression
+function sumToArProg(n) {
+   return (n * (n + 1)) / 2;
+}
+
+console.log(sumToArProg(100));
+
+// Calculate factorial
+// using recursion
+function factorial(n) {
+   return n != 1 ? n * factorial(n - 1) : 1;
+}
+
+console.log(factorial(5)); // 120
+
+// using for loop
+function factorialLoop(n) {
+   let result = 1;
+   for (let i = n; i > 0; i--) {
+      result *= i;
+   }
+
+   return result;
+}
+
+console.log(factorialLoop(5));
+
+// Performance test which run faster loop vs recursion
+function benchmark(fn, input, iterations = 1_000_000) {
+   const start = performance.now();
+
+   for (let i = 0; i < iterations; i++) {
+      fn(input);
+   }
+
+   const end = performance.now();
+   return (end - start).toFixed(2); // Time in milliseconds
+}
+
+// Pass a larger value like 100 to make the difference noticeable
+console.log(`Recursive factorial: ${benchmark(factorial, 100)} ms`);
+console.log(`Loop factorial:      ${benchmark(factorialLoop, 100)} ms`);
+
+// Output a single-linked list
+let list = {
+   value: 1,
+   next: {
+      value: 2,
+      next: {
+         value: 3,
+         next: {
+            value: 4,
+            next: null,
+         },
+      },
+   },
+};
+
+function getArbitraryDepth(list) {
+   if (list === null || typeof list !== "object") return 0;
+
+   let keys = Object.keys(list);
+   if (keys.length === 0) return 1; // Empty object still counts as 1 level
+
+   // Find the deepest path among all keys
+   return 1 + Math.max(...keys.map((key) => getArbitraryDepth(list[key])));
+}
+
+console.log(getArbitraryDepth(list));
+
+function printList(list) {
+   while (list) {
+      console.log(list.value);
+      list = list.next;
+   }
+}
+
+console.log(printList(list));
