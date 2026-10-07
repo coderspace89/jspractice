@@ -967,3 +967,149 @@ function printList(list) {
 }
 
 console.log(printList(list));
+
+function* generator(name) {
+   const nextName = yield name;
+   yield nextName;
+}
+
+let it = generator("Salman");
+
+console.log(it.next().value);
+console.log(it.next("Farhan").value);
+console.log(it.next().value);
+
+function* pauseTimeOut(time) {
+   const result = yield setTimeout(() => {}, 1000);
+   return result; // or yield result
+}
+
+let itPause = pauseTimeOut(200);
+
+itPause.next(); // Yields the Timeout object
+console.log(itPause.next(250).value); // Yields 250!
+
+function delayTimer(time) {
+   return new Promise((resolve) => setTimeout(resolve, time));
+}
+
+// Using async/await (built on top of generator concepts)
+async function pauseDelayTimer(time) {
+   await delayTimer(time);
+   return time;
+}
+
+pauseDelayTimer(1000).then(console.log);
+
+function* random(names) {
+   for (let name of names) {
+      yield name;
+   }
+}
+
+let randomGen = random(["Tom", "Dick", "Harry"]);
+
+for (let value of randomGen) {
+   console.log(value);
+}
+
+const iteratorObj = {
+   from: 100,
+   to: 500,
+
+   *[Symbol.iterator]() {
+      for (let value = this.from; value <= this.to; value++) {
+         yield value;
+      }
+   },
+};
+
+console.log([...iteratorObj]);
+
+// difference between excecution
+// of async geerator function
+// and async regular funcion
+async function regularAsyncFetch(url) {
+   let response = await fetch(url);
+   let result = await response.json();
+   return result;
+}
+
+// Non-generator async function
+console.log(regularAsyncFetch("https://dummyjson.com/posts"));
+// Output: Promise { <pending> }
+
+async function regularDataConsume() {
+   let posts = await regularAsyncFetch("https://dummyjson.com/posts");
+   // 2. Builds all 100 post objects in memory at once
+   for (let post of posts.posts) {
+      if (post.id > 2) break; // Stops printing, but full array was already allocated in memory
+      console.log(post.title);
+   }
+}
+
+regularDataConsume();
+
+// 1. Convert to an Async Generator function (async function*)
+async function* asyncGenFetch(url) {
+   let response = await fetch(url);
+   let result = await response.json();
+
+   // Yield each post individually
+   for (let post of result.posts) {
+      yield post;
+   }
+}
+
+// Async generator function
+console.log(asyncGenFetch("https://dummyjson.com/posts"));
+// Output: AsyncGenerator { <pending> }
+
+async function generatorDataConsume() {
+   for await (let post of asyncGenFetch("https://dummyjson.com/posts")) {
+      if (post.id > 2) break; // 3. Calling 'break' cancels/closes the generator immediately!
+      console.log(post.title);
+   }
+}
+
+generatorDataConsume();
+
+async function* dataCombo(url1, url2) {
+   // 1. Fetch both URLs in parallel
+   const [res1, res2] = await Promise.all([fetch(url1), fetch(url2)]);
+
+   // 2. Parse both JSON responses separately
+   const result1 = await res1.json();
+   const result2 = await res2.json();
+
+   // 3. Yield posts individually
+   for (let post of result1.posts) {
+      yield post;
+   }
+
+   // 4. Yield comments individually
+   for (let comment of result2.comments) {
+      yield comment;
+   }
+}
+
+async function comboConsumer() {
+   for await (let item of dataCombo(
+      "https://dummyjson.com/posts",
+      "https://dummyjson.com/comments",
+   )) {
+      // Note: Comments might have body instead of title, or different property structure
+      if (item.id > 2) break; // Closes generator early!
+      console.log(item.title || item.body);
+   }
+}
+
+comboConsumer();
+
+async function* dataCombo(url1, url2) {
+   const [res1, res2] = await Promise.all([fetch(url1), fetch(url2)]);
+   const [result1, result2] = await Promise.all([res1.json(), res2.json()]);
+
+   yield* result1.posts; // Streams all posts
+   yield* result2.comments; // Streams all comments
+}
