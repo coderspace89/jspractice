@@ -1113,3 +1113,125 @@ async function* dataCombo(url1, url2) {
    yield* result1.posts; // Streams all posts
    yield* result2.comments; // Streams all comments
 }
+
+// edabit challenges
+// First Class, Second Class and Third Class Levers
+function determineLever(array) {
+   let str = array.join("");
+   return str.charAt(0) == "f"
+      ? "third class lever"
+      : str.charAt(2) == "f"
+        ? "second class lever"
+        : str.charAt(1) == "f"
+          ? "first class lever"
+          : null;
+}
+
+console.log(determineLever(["e", "f", "l"])); // "first class lever"
+
+console.log(determineLever(["e", "l", "f"])); // "second class lever"
+
+console.log(determineLever(["f", "e", "l"])); // "third class lever"
+
+// Chinese Zodiac
+
+function chineseZodiac(birthYear) {
+   const remainder = (birthYear - 4) % 12;
+
+   switch (remainder) {
+      case 0:
+         return "Rat";
+      case 1:
+         return "Ox";
+      case 2:
+         return "Tiger";
+      case 3:
+         return "Rabbit";
+      case 4:
+         return "Dragon";
+      case 5:
+         return "Snake";
+      case 6:
+         return "Horse";
+      case 7:
+         return "Sheep";
+      case 8:
+         return "Monkey";
+      case 9:
+         return "Rooster";
+      case 10:
+         return "Dog";
+      case 11:
+         return "Pig";
+   }
+}
+
+console.log(chineseZodiac(2021)); //➞ "Ox"
+
+console.log(chineseZodiac(2020)); //➞ "Rat"
+
+console.log(chineseZodiac(1933)); //➞ "Rooster"
+
+// Rotate for Max Number
+function rotateMaxNumber(number) {
+   let numStr = String(number).split("");
+   let result = numStr.sort((a, b) => b - a);
+   console.log(Number(result.join("")));
+   return Number(result.join(""));
+}
+
+rotateMaxNumber(123); //➞ 321
+
+rotateMaxNumber("001"); //➞ 100
+
+rotateMaxNumber(999); //➞ 999
+
+// Narcissistic Number
+function isNarcissistic(narc) {
+   let narcStr = String(narc).split("");
+   let total = narcStr.reduce(
+      (acc, elem) => Number(elem ** narcStr.length) + acc,
+      0,
+   );
+   return total == narc;
+}
+
+console.log(isNarcissistic(153)); //➞ true
+
+console.log(isNarcissistic(370)); //➞ true
+
+console.log(isNarcissistic(1652)); //➞ false
+
+// Less Than 100 Array Remix
+function arrayLessThan100(numArr) {
+   let total = numArr.reduce((acc, curr) => acc + curr, 0);
+   return total < 100;
+}
+
+console.log(arrayLessThan100([5, 57])); //➞ true
+
+console.log(arrayLessThan100([77, 30])); //➞ false
+
+console.log(arrayLessThan100([0])); //➞ true
+
+// Cowboy Shootout
+function rogerShots(arrShots) {
+   let filterShots = arrShots.filter(
+      (item) => item == "Bang!" || item == "BangBang!",
+   );
+   console.log(filterShots.length * 0.5);
+   return filterShots.length * 0.5;
+}
+
+rogerShots(["Bang!", "Bang!", "Bang!", "Bang!", "Bang!", "Bang!"]); //➞ 3
+
+rogerShots(["Bang!", "Bang!", "Bang!", "Bang!", "BangBang!"]); //➞ 2.5
+
+rogerShots([
+   "Bang!",
+   "BangBangBang!",
+   "Boom!",
+   "Bang!",
+   "BangBang!",
+   "BangBang!",
+]); //➞ 2
