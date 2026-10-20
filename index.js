@@ -1344,4 +1344,64 @@ lastFailedCheck(["pass", "pass"]); // -1
 lastFailedCheck(["fail", "pass"]); // 0
 
 // Stop at Cancel
+function beforeCancel(actions) {
+  // Write your code here.
+  console.log(
+    actions.indexOf("cancel") != -1
+      ? actions.slice(0, actions.indexOf("cancel"))
+      : actions,
+  );
+  return actions.indexOf("cancel") != -1
+    ? actions.slice(0, actions.indexOf("cancel"))
+    : actions;
+}
 
+beforeCancel(["save", "send", "cancel", "print"]); // ["save","send"]
+
+beforeCancel(["cancel", "save"]); // []
+
+beforeCancel(["save", "print"]); // ["save","print"]
+
+// Total the Successful Uploads
+function successfulUploadTotal(uploads) {
+  console.log(
+    uploads.reduce((acc, curr) => (curr[1] == true ? curr[0] + acc : acc), 0),
+  );
+  return uploads.reduce(
+    (acc, curr) => (curr[1] == true ? curr[0] + acc : acc),
+    0,
+  );
+}
+
+successfulUploadTotal([
+  [4, true],
+  [9, false],
+  [2, true],
+]); // 6
+
+successfulUploadTotal([
+  [5, false],
+  [2, false],
+]); // 0
+
+successfulUploadTotal([
+  [3, true],
+  [3, true],
+]); // 6
+
+// Fill Missing Readings
+function fillReadings(readings, fallback) {
+  console.log(
+    readings.map((reading) => (reading != null ? reading : fallback)),
+  );
+  return readings.map((reading) => (reading != null ? reading : fallback));
+}
+
+fillReadings([12, null, 0], 5); // [12,5,0]
+
+fillReadings([null, null], -1); // [-1,-1]
+
+fillReadings([4, 0, -2], 9); // [4,0,-2]
+
+// Recursion: Length of a String
+function length(str) {}
