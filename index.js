@@ -1404,4 +1404,40 @@ fillReadings([null, null], -1); // [-1,-1]
 fillReadings([4, 0, -2], 9); // [4,0,-2]
 
 // Recursion: Length of a String
-function length(str) {}
+function length(str) {
+  if (str == "") return 0;
+  return 1 + length(str.slice(1));
+}
+
+console.log(length("apple")); //➞ 5
+
+console.log(length("make")); //➞ 4
+
+console.log(length("a")); //➞ 1
+
+console.log(length("")); //➞ 0
+
+// hoisting concept in depth
+var x = 7;
+function getX() {
+  console.log("hello js");
+}
+
+// Area of a Rectangle
+function area(h, w) {
+  if (h == 0 || w == 0) return -1;
+  if (h < 0 || w < 0) return -1;
+  return h * w;
+}
+
+console.log(area(3, 4)); //➞ 12
+
+console.log(area(10, 11)); //➞ 110
+
+console.log(area(-1, 5)); //➞ -1
+
+console.log(area(0, 2)); //➞ -1
+
+// ES6: Destructuring Arrays I
+const array = [1, 2, 3, 4, 5, 6];
+const [a1, b1, ...rest] = array;
